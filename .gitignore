@@ -14,3 +14,6 @@ client/components/_snapshots_/*
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
+
+#seed data
+database/clips.txt

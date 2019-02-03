@@ -1,6 +1,7 @@
 const faker = require('faker');
 const db = require('./index.js');
-const gameData = require('./database/gameData.js');
+// const gameData = require('./database/gameData.js');
+const gameData = require('./gameData.js');
 // const gameData = require('./gameData_webpImages.js');
 
 /*
@@ -10,8 +11,8 @@ and comment-out path to gameData.js.
 
 module.exports = () => {
   new Promise(function (resolve, reject) {
-    for (i = 0; i < gameData.videos.length; i++) {
-      let video = `INSERT INTO videos
+      for (i = 0; i < gameData.videos.length; i++) {
+        let video = `INSERT INTO videos
               (user_name,
               game_name,
               game_box_art_url,
@@ -47,25 +48,25 @@ module.exports = () => {
               '${JSON.stringify(faker.date.recent()).substring(12, 20)/* duration */}',
               '${Math.floor((Math.random() * 400) + 1)/* view_count */}',
               '${Math.floor((Math.random() * 12) + 1)/* created_at */}')`;
-      if (i === gameData.videos.length - 1) {
-        db.connection.query(video, (err, res) => {
-          if (err) {
-            console.log(err);
-          } else {
-            resolve();
-          }
-        });
-      } else {
-        db.connection.query(video);
-      }
-    };
+        if (i === gameData.videos.length - 1) {
+          db.connection.query(video, (err, res) => {
+            if (err) {
+              console.log(err);
+            } else {
+              resolve();
+            }
+          });
+        } else {
+          db.connection.query(video);
+        }
+      };
 
-  })
-  .then(function (result) {
-    console.log('game videos table seeded');
-    return new Promise(function(resolve, reject){
-      for (i = 0; i < gameData.clips.length; i++) {
-        let clip = `INSERT INTO clips
+    })
+    .then(function (result) {
+      console.log('game videos table seeded');
+      return new Promise(function (resolve, reject) {
+        for (i = 0; i < gameData.clips.length; i++) {
+          let clip = `INSERT INTO clips
           (user_name,
           game_name,
           game_box_art_url,
@@ -101,20 +102,20 @@ module.exports = () => {
           '${JSON.stringify(faker.date.recent()).substring(12, 20)/* duration */}',
           '${Math.floor((Math.random() * 400) + 1)/* view_count */}',
           '${Math.floor((Math.random() * 12) + 1)/* created_at */}')`;
-        if (i === gameData.clips.length - 1) {
-          db.connection.query(clip, (err, res) => {
-            if (err) {
-              console.log(err);
-            } else {
-              resolve(console.log('game clips table seeded'));
-            }
-          });
-        } else {
-          db.connection.query(clip);
-        }
-      };
-    });
-  }).then(result => db.connection.end());
+          if (i === gameData.clips.length - 1) {
+            db.connection.query(clip, (err, res) => {
+              if (err) {
+                console.log(err);
+              } else {
+                resolve(console.log('game clips table seeded'));
+              }
+            });
+          } else {
+            db.connection.query(clip);
+          }
+        };
+      });
+    }).then(result => db.connection.end());
   return 'seed script called';
 };
 
