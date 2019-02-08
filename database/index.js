@@ -4,8 +4,8 @@ const connection = mysql.createConnection({
 
   /* for local hosting or creating static bundle.js */
   host: 'localhost',
-  user: 'root',
-  password: '', // fill out
+  user: 'student',
+  password: 'student', // fill out
   database: 'categories_module'
 
   /* for Elastic Beanstalk hosting connected to seeded RDS MySQL database */

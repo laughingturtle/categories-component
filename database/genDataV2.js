@@ -56,3 +56,6 @@ function writeFun() {
   }
   writeStream.end();
 }
+// node --max-old-space-size=12000 genDataV2.js
+// mysql -u root -p --local-infile categories_module
+// LOAD DATA LOCAL INFILE '/Users/apple/george-categories-component/database/clips.txt' INTO TABLE clips FIELDS TERMINATED BY ','  LINES TERMINATED BY '\n' IGNORE 1 LINES (user_name,game_name, game_box_art_url, title, description,   clipped_by, url, thumbnail_url_1, thumbnail_url_2, thumbnail_url_3,    thumbnail_url_4, thumbnail_url_5,user_url, game_url, duration, view_count, created_at) ;
