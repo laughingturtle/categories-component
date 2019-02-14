@@ -1,7 +1,8 @@
 var mongoose = require('mongoose'),
   Admin = mongoose.mongo.Admin;
 
-const mongoDB = 'mongodb://127.0.0.1/categories_db';
+// const mongoDB = 'mongodb://127.0.0.1/categories_db';
+const mongoDB = 'mongodb://localhost:127.0.0.1/categories_db';
 mongoose.connect(mongoDB, {
   useNewUrlParser: true
 });
@@ -43,7 +44,7 @@ const CategoriesSchema = new mongoose.Schema({
   },
 });
 
-const CategoriesModel = mongoose.model('CategoriesModel', CategoriesSchema);
+const CategoriesModel = mongoose.model('CategoriesModel', CategoriesSchema, 'CategoriesModel');
 module.exports.CategoriesModel = CategoriesModel;
 
 //// mongoimport --db categories_db --collection CategoriesModel --type csv --headerline --file /Users/apple/george-categories-component/database/clips.txt

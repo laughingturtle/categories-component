@@ -26,6 +26,7 @@ CREATE TABLE videos (
 
 CREATE TABLE clips (
   clip_id INT unsigned NOT NULL AUTO_INCREMENT,
+  id INT NOT NULL,
   user_name VARCHAR(100) NOT NULL,
   game_name VARCHAR(150) NOT NULL,
   game_box_art_url VARCHAR(1000) NOT NULL,

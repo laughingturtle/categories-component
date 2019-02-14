@@ -20,6 +20,7 @@ const createTables = () => {
   const queryText =
     `CREATE TABLE IF NOT EXISTS
       clips(
+        id INT,
         user_name VARCHAR(100) NOT NULL,
         game_name VARCHAR(150) NOT NULL,
         game_box_art_url VARCHAR(1000) NOT NULL,
@@ -39,7 +40,7 @@ const createTables = () => {
         created_at INT
       )`;
 
-  pool.query('SELECT * FROM clips limit 1;')
+  pool.query(queryText)
     .then((res) => {
       console.log(res);
       pool.end();
@@ -50,6 +51,6 @@ const createTables = () => {
     });
 }
 
-// createTables();
+createTables();
 module.exports.pool = pool;
 // COPY clips FROM '/Users/apple/george-categories-component/database/clips.txt' DELIMITER ',' CSV HEADER;

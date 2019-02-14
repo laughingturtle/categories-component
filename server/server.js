@@ -3,12 +3,9 @@ const app = express();
 const bodyParser = require(`body-parser`);
 const cors = require('cors');
 // const db = require('../database'); //mySQL
-// const db = require('../databaseNoSQL/db'); //mongo
-const db = require('../databasePostgre/db'); //PostgreSQL
+const db = require('../databaseNoSQL/db'); //mongo
+// const db = require('../databasePostgre/db'); //PostgreSQL
 
-///Users/apple/george-categories-component/databaseNoSQL
-///Users/apple/george-categories-component/database
-///Users/apple/george-categories-component/server/server.js
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static(`${__dirname}/../public`));
@@ -17,49 +14,122 @@ app.use(express.static(`${__dirname}/../public`));
 // mongo
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// app.get('/recent-broadcasts', (req, res) => {
-//   // console.log(db.CategoriestModel.findById('5c5c7ac2796578153e332cdb'));
-//   console.log('this is DB', db.CategoriesModel.find({}));
-//   db.CategoriesModels.find({}).then((data) => {
-//     // res.send(data);
-//     console.log('output from server: ', data);
-//     res.json(data);
-//   })
+app.get('/recent-broadcasts', (req, res) => {
+  //db.CategoriesModel.find({}).sort({created_at: -1, view_count: -1}).limit(10)
+  db.CategoriesModel.find()
+    .sort({
+      created_at: -1,
+      view_count: -1
+    })
+    .limit(8)
+    .exec((err, data) => {
+      if (err) {
+        console.log(err);
+        res.status(404).end();
+      }
+      console.log(data);
+      res.json(data);
+    })
+});
 
-// db.CategoriestModel.find().limit(10).exec((err, data) => {
-//   if (err) {
-//     console.log(err);
-//     res.status(404).end();
-//   }
-//   // res.send(data);
-//   console.log(data);
-//   res.json(data);
-// })
-// });
+app.get('/recent-highlights', (req, res) => {
+  db.CategoriesModel.find({})
+    .sort({
+      created_at: -1,
+      view_count: -1
+    })
+    .limit(50)
+    .exec((err, data) => {
+      if (err) {
+        console.log(err);
+        res.status(404).end();
+      }
+      res.json(data);
+    })
+});
 
-// app.get('/recent-highlights', (req, res) => {
-//   db.CategoriestModel.find({}).limit(10).exec((err, data) => {
-//     if (err) {
-//       console.log(err);
-//       res.status(404).end();
-//     }
-//     // res.send(data);
-//     console.log(data);
-//     res.send(JSON.parse(JSON.stringify(data)));
-//   })
-// });
+app.get('/popular-clips', (req, res) => {
+  db.CategoriesModel.find({})
+    .sort({
+      created_at: -1,
+      view_count: -1
+    })
+    .limit(8)
+    .exec((err, data) => {
+      if (err) {
+        console.log(err);
+        res.status(404).end();
+      }
+      res.json(data);
+    })
+});
+// post => 98 ms
+app.post('/popular-clips', (req, res) => {
 
-// app.get('/popular-clips', (req, res) => {
-//   db.CategoriestModel.find({}).limit(10).exec((err, data) => {
-//     if (err) {
-//       console.log(err);
-//       res.status(404).end();
-//     }
-//     // res.send(data);
-//     console.log(data);
-//     res.send(JSON.parse(JSON.stringify(data)));
-//   })
-// });
+  let new_clips = new db.CategoriesModel({
+    user_name: req.query.user_name,
+    game_name: req.query.game_name,
+    game_box_art_url: req.query.game_box_art_url,
+    title: req.query.game_box_art_url,
+    description: req.query.game_box_art_url,
+    clipped_by: req.query.game_box_art_url,
+    url: req.query.game_box_art_url,
+    // replace with faker function
+    thumbnail_url_1: req.query.thumbnail_url_1,
+    thumbnail_url_2: req.query.thumbnail_url_2,
+    thumbnail_url_3: req.query.thumbnail_url_3,
+    thumbnail_url_4: req.query.thumbnail_url_4,
+    thumbnail_url_5: req.query.thumbnail_url_5,
+    user_url: req.query.user_url,
+    game_url: req.query.game_url,
+    duration: req.query.duration,
+    view_count: req.query.view_count,
+    created_at: new Date()
+  })
+
+  new_clips.save((err) => {
+    if (err) {
+      console.log('error saving data, ', err);
+      res.status(500).send('error saving data')
+    }
+    console.log('successfully saved data')
+    res.status(201).send('DONE');
+  })
+});
+
+// update
+app.put('/popular-clips', (req, res) => {
+  db.CategoriesModel.find({})
+    .sort({
+      created_at: -1,
+      view_count: -1
+    })
+    .limit(8)
+    .exec((err, data) => {
+      if (err) {
+        console.log(err);
+        res.status(404).end();
+      }
+      res.json(data);
+    })
+});
+
+// delete
+app.delete('/popular-clips', (req, res) => {
+  db.CategoriesModel.find({})
+    .sort({
+      created_at: -1,
+      view_count: -1
+    })
+    .limit(8)
+    .exec((err, data) => {
+      if (err) {
+        console.log(err);
+        res.status(404).end();
+      }
+      res.json(data);
+    })
+});
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // mySQL
@@ -143,78 +213,78 @@ app.use(express.static(`${__dirname}/../public`));
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /* for static page, comment out all GET routes */
-app.get('/recent-broadcasts', (req, res) => {
-  new Promise(function (resolve, reject) {
-      db.pool.query('SELECT * FROM clips limit 10', (error, results, fields) => {
-        if (error) {
-          res.send(error);
-        } else {
-          // console.log('results recent-broadcasts >', results);
-          resolve(results);
-        }
-      });
-    })
-    .then((results) => JSON.parse(JSON.stringify(results)))
-    .then((data) => {
-      //console.log('All Videos -->', data);
-      data.rows.sort((a, b) => {
-        return a.created_at - b.created_at;
-      });
-      console.log('THIS IS DATA>>>>>   ', data.rows);
-      let recentBroadcasts = data.rows.slice(0, 8);
-      //console.log('RECENT BROADCASTS =>', recentBroadcasts);
-      return res.send(recentBroadcasts);
-    });
-});
+// app.get('/recent-broadcasts', (req, res) => {
+//   new Promise(function (resolve, reject) {
+//       db.pool.query('SELECT * FROM clips limit 10', (error, results, fields) => {
+//         if (error) {
+//           res.send(error);
+//         } else {
+//           // console.log('results recent-broadcasts >', results);
+//           resolve(results);
+//         }
+//       });
+//     })
+//     .then((results) => JSON.parse(JSON.stringify(results)))
+//     .then((data) => {
+//       //console.log('All Videos -->', data);
+//       data.rows.sort((a, b) => {
+//         return a.created_at - b.created_at;
+//       });
+//       console.log('THIS IS DATA>>>>>   ', data.rows);
+//       let recentBroadcasts = data.rows.slice(0, 8);
+//       //console.log('RECENT BROADCASTS =>', recentBroadcasts);
+//       return res.send(recentBroadcasts);
+//     });
+// });
 
-app.get('/recent-highlights', (req, res) => {
-  new Promise(function (resolve, reject) {
-      // db.connection.query('SELECT * FROM videos', (error, results, fields) => {
-      db.pool.query('SELECT * FROM clips limit 10', (error, results, fields) => {
-        if (error) {
-          res.send(error);
-        } else {
-          console.log('results recent-highlights >', results);
-          resolve(results);
-        }
-      });
-    })
-    .then((results) => JSON.parse(JSON.stringify(results)))
-    .then((data) => {
-      data.rows.sort((a, b) => {
-        return a.created_at - b.created_at;
-      });
-      let temp = data.rows.slice(0, 50);
-      temp.sort((a, b) => {
-        return b.view_count - a.view_count;
-      });
-      let recentHighlights = temp.slice(0, 8);
-      //console.log('RECENT HIGHLIGHTS =>', recentHighlights);
-      return res.send(recentHighlights);
-    });
-});
+// app.get('/recent-highlights', (req, res) => {
+//   new Promise(function (resolve, reject) {
+//       // db.connection.query('SELECT * FROM videos', (error, results, fields) => {
+//       db.pool.query('SELECT * FROM clips limit 10', (error, results, fields) => {
+//         if (error) {
+//           res.send(error);
+//         } else {
+//           console.log('results recent-highlights >', results);
+//           resolve(results);
+//         }
+//       });
+//     })
+//     .then((results) => JSON.parse(JSON.stringify(results)))
+//     .then((data) => {
+//       data.rows.sort((a, b) => {
+//         return a.created_at - b.created_at;
+//       });
+//       let temp = data.rows.slice(0, 50);
+//       temp.sort((a, b) => {
+//         return b.view_count - a.view_count;
+//       });
+//       let recentHighlights = temp.slice(0, 8);
+//       //console.log('RECENT HIGHLIGHTS =>', recentHighlights);
+//       return res.send(recentHighlights);
+//     });
+// });
 
-app.get('/popular-clips', (req, res) => {
-  new Promise(function (resolve, reject) {
-      db.pool.query('SELECT * FROM clips limit 10', (error, results, fields) => {
-        if (error) {
-          res.send(error);
-        } else {
-          console.log('results popular-clips >', results);
-          resolve(results);
-        }
-      });
-    })
-    .then((results) => JSON.parse(JSON.stringify(results)))
-    .then((data) => {
-      data.rows.sort((a, b) => {
-        return b.view_count - a.view_count;
-      });
-      let popularClips = data.rows.slice(0, 8);
-      //console.log('POPULAR CLIPS =>', popularClips);
-      return res.send(popularClips);
-    });
-});
+// app.get('/popular-clips', (req, res) => {
+//   new Promise(function (resolve, reject) {
+//       db.pool.query('SELECT * FROM clips limit 10', (error, results, fields) => {
+//         if (error) {
+//           res.send(error);
+//         } else {
+//           console.log('results popular-clips >', results);
+//           resolve(results);
+//         }
+//       });
+//     })
+//     .then((results) => JSON.parse(JSON.stringify(results)))
+//     .then((data) => {
+//       data.rows.sort((a, b) => {
+//         return b.view_count - a.view_count;
+//       });
+//       let popularClips = data.rows.slice(0, 8);
+//       //console.log('POPULAR CLIPS =>', popularClips);
+//       return res.send(popularClips);
+//     });
+// });
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // connection

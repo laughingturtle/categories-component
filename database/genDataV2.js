@@ -30,6 +30,7 @@ writeFun();
 function writeFun() {
   for (var i = 0; i < 10000000; i++) { // 1Gtimes
     var row = {
+      // id: i,
       user_name: faker.internet.userName(),
       game_name: faker.random.word(),
       game_box_art_url: 'https://static-cdn.jtvnw.net/ttv-boxart/Dark%20Souls%20III-40x56.jpg',
