@@ -1,41 +1,45 @@
-const fs = require('fs');
-const csv = require('fast-csv');
 const db = require('./db');
-var async = require('async');
-// const split = require('split');
-// const async = require('asyncawait/async');
-// const await = require('asyncawait/await');
+const faker = require('faker');
+const uuid = require('uuid');
+var Promise = require("bluebird");
 
-const stream = fs.createReadStream('../database/clips.txt');
+faker.locale = "en_US";
 
-var parser = csv
-  .fromStream(stream, {
-    headers: true
-  })
-  .on("data", function (data) {
-    // console.log(data);
-    // return new Promise((resolve, reject) => {
-    //   db.CategoriestModel.create(data, (err, dbData) => {
-    //     if (err) {
-    //       reject(err);
-    //     }
-    //     console.log(dbData);
-    //     resolve(dbData);
-    //   })
-    // })
-    db.CategoriestModel.create(data, (err, dbData) => {
-      if (err) {
-        console.log(err);
+// require('events').EventEmitter.prototype._maxListeners = 1000;
+
+async function genData() {
+
+  faker.seed(123);
+
+  for (let j = 0; j < 1000; j++) {
+    var stream = [];
+    for (let i = 0; i < 10000; i++) {
+      var obj = {
+        user_name: faker.internet.userName(),
+        game_name: faker.random.word(),
+        game_box_art_url: 'https://static-cdn.jtvnw.net/ttv-boxart/Dark%20Souls%20III-40x56.jpg',
+        title: faker.random.word() + ' ' + faker.random.word(),
+        description: faker.lorem.sentence(),
+        clipped_by: faker.internet.userName(),
+        url: "https://www.youtube.com/watch?v=oHg5SJYRHA0",
+        // replace with faker function
+        thumbnail_url_1: faker.random.image(),
+        thumbnail_url_2: faker.random.image(),
+        thumbnail_url_3: faker.random.image(),
+        thumbnail_url_4: faker.random.image(),
+        thumbnail_url_5: faker.random.image(),
+        user_url: "https://www.youtube.com/watch?v=oHg5SJYRHA0",
+        game_url: "https://www.youtube.com/watch?v=oHg5SJYRHA0",
+        duration: JSON.stringify(faker.date.recent()).substring(12, 20),
+        view_count: Math.floor((Math.random() * 400) + 1),
+        created_at: faker.date.recent()
       }
-    })
-  }).on("end", function () {
-    console.log("done");
-  })
+      stream.push(obj);
+    }
+    await db.CategoriesModel.insertMany(stream);
 
-// mongoimport --db CategoriestModel --collection CategoriestModel --type csv --headerline --file /Users/apple/george-categories-component/database/clips.txt
+  }
+}
 
-
-
-
-
-// mongoimport --db CategoriestModel --collection clips --type csv --headerline --file /Users/apple/george-categories-component/database/clips.txt
+genData();
+console.log('Completed seed data')

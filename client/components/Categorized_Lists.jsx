@@ -50,6 +50,7 @@ export default class Categorized_Lists extends React.Component {
         return allVideos;
       })
       .then(allVideos => {
+        console.log(allVideos);
         let all = allVideos.recentBroadcasts.concat(
           allVideos.recentHighlights,
           allVideos.popularClips

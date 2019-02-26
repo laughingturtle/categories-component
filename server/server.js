@@ -1,26 +1,63 @@
+const nb = require('newrelic');
 const express = require(`express`);
 const app = express();
 const bodyParser = require(`body-parser`);
 const cors = require('cors');
+const responseTime = require('response-time');
+const redis = require('redis');
 // const db = require('../database'); //mySQL
 const db = require('../databaseNoSQL/db'); //mongo
 // const db = require('../databasePostgre/db'); //PostgreSQL
+const client = redis.createClient();
 
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static(`${__dirname}/../public`));
+app.use(responseTime());
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // mongo
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+const getClips = (req, res) => {
+  db.CategoriesModel.find()
+    // .sort({
+    //   created_at: -1,
+    //   view_count: -1
+    // })
+    .limit(8)
+    .exec((err, data) => {
+      if (err) {
+        console.log(err);
+        res.status(404).end();
+      }
+      // console.log('data>>>', data);
+      const clipsData = JSON.stringify(data[1])
+      client.set('clips', 3, clipsData);
+      res.json(data);
+    })
+
+}
+
+const getCache = (req, res) => {
+  //Check the cache data from the server redis
+  client.get('clips', (err, result) => {
+    if (result) {
+      console.log(result)
+      res.send(result);
+    } else {
+      getClips(req, res);
+    }
+  });
+}
+
 app.get('/recent-broadcasts', (req, res) => {
   //db.CategoriesModel.find({}).sort({created_at: -1, view_count: -1}).limit(10)
   db.CategoriesModel.find()
-    .sort({
-      created_at: -1,
-      view_count: -1
-    })
+    // .sort({
+    //   created_at: -1,
+    //   view_count: -1
+    // })
     .limit(8)
     .exec((err, data) => {
       if (err) {
@@ -32,13 +69,13 @@ app.get('/recent-broadcasts', (req, res) => {
     })
 });
 
+
+
+// app.get('/recent-broadcasts', getCache);
+
 app.get('/recent-highlights', (req, res) => {
   db.CategoriesModel.find({})
-    .sort({
-      created_at: -1,
-      view_count: -1
-    })
-    .limit(50)
+    .limit(8)
     .exec((err, data) => {
       if (err) {
         console.log(err);
@@ -50,10 +87,6 @@ app.get('/recent-highlights', (req, res) => {
 
 app.get('/popular-clips', (req, res) => {
   db.CategoriesModel.find({})
-    .sort({
-      created_at: -1,
-      view_count: -1
-    })
     .limit(8)
     .exec((err, data) => {
       if (err) {
@@ -70,10 +103,10 @@ app.post('/popular-clips', (req, res) => {
     user_name: req.query.user_name,
     game_name: req.query.game_name,
     game_box_art_url: req.query.game_box_art_url,
-    title: req.query.game_box_art_url,
-    description: req.query.game_box_art_url,
-    clipped_by: req.query.game_box_art_url,
-    url: req.query.game_box_art_url,
+    title: req.query.title,
+    description: req.query.description,
+    clipped_by: req.query.clipped_by,
+    url: req.query.url,
     // replace with faker function
     thumbnail_url_1: req.query.thumbnail_url_1,
     thumbnail_url_2: req.query.thumbnail_url_2,
@@ -84,7 +117,7 @@ app.post('/popular-clips', (req, res) => {
     game_url: req.query.game_url,
     duration: req.query.duration,
     view_count: req.query.view_count,
-    created_at: new Date()
+    created_at: Math.floor((Math.random() * 12) + 1)
   })
 
   new_clips.save((err) => {
@@ -99,36 +132,38 @@ app.post('/popular-clips', (req, res) => {
 
 // update
 app.put('/popular-clips', (req, res) => {
-  db.CategoriesModel.find({})
-    .sort({
-      created_at: -1,
-      view_count: -1
-    })
-    .limit(8)
-    .exec((err, data) => {
-      if (err) {
-        console.log(err);
-        res.status(404).end();
-      }
-      res.json(data);
-    })
+  db.CategoriesModel
+    .findOneAndUpdate({
+        user_name: req.query.user_name
+      }, {
+        $set: {
+          game_name: req.query.game_name
+        }
+      },
+      (err, data) => {
+        if (err) {
+          console.log(err);
+          res.status(404).end();
+        }
+        console.log('updated ', data);
+        res.json('OK');
+      })
 });
 
 // delete
 app.delete('/popular-clips', (req, res) => {
-  db.CategoriesModel.find({})
-    .sort({
-      created_at: -1,
-      view_count: -1
-    })
-    .limit(8)
-    .exec((err, data) => {
-      if (err) {
-        console.log(err);
-        res.status(404).end();
-      }
-      res.json(data);
-    })
+  db.CategoriesModel
+    .findOneAndDelete({
+        user_name: req.query.user_name
+      },
+      (err, data) => {
+        if (err) {
+          console.log(err);
+          res.status(404).end();
+        }
+        console.log('deleted ', data);
+        res.json('OK');
+      })
 });
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////

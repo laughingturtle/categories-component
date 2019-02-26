@@ -4,10 +4,10 @@
 
 ## Related Projects
 
-  - https://github.com/RPT10-TACO-TUESDAY/anna-chat-component
-  - https://github.com/RPT10-TACO-TUESDAY/milena-menu-bar-component
-  - https://github.com/RPT10-TACO-TUESDAY/faris-video-service
-  - https://github.com/RPT10-TACO-TUESDAY/
+- https://github.com/RPT10-TACO-TUESDAY/anna-chat-component
+- https://github.com/RPT10-TACO-TUESDAY/milena-menu-bar-component
+- https://github.com/RPT10-TACO-TUESDAY/faris-video-service
+- https://github.com/RPT10-TACO-TUESDAY/
 
 ## Table of Contents
 
@@ -37,19 +37,24 @@ npm install
 
 ### Seeding Database
 
-MySQL 5.7 is required.
+In root directory, run the following:
 
-From within root directory, execute `gameDataSchema.sql`:
-
-```sh
-mysql -u root -p < database/gameDataSchema.sql
-```
-
-Now run the seed script:
+- To generate 10M record CSV:
 
 ```sh
-npm run seed-games
+node --max-old-space-size=12000 database/genDataV2.js
 ```
 
+- Then import in Mongo:
 
+```sh
+mongoimport --db categories_db --collection CategoriesModel --type csv --headerline --file database/clips.txt
+```
 
+### Starting the app
+
+```sh
+npm start
+```
+
+then open up http://localhost:3000/
