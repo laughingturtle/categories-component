@@ -4,11 +4,11 @@ const app = express();
 const bodyParser = require(`body-parser`);
 const cors = require('cors');
 const responseTime = require('response-time');
-const redis = require('redis');
+// const redis = require('redis');
 // const db = require('../database'); //mySQL
 const db = require('../databaseNoSQL/db'); //mongo
 // const db = require('../databasePostgre/db'); //PostgreSQL
-const client = redis.createClient();
+// const client = redis.createClient();
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -19,37 +19,37 @@ app.use(responseTime());
 // mongo
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const getClips = (req, res) => {
-  db.CategoriesModel.find()
-    // .sort({
-    //   created_at: -1,
-    //   view_count: -1
-    // })
-    .limit(8)
-    .exec((err, data) => {
-      if (err) {
-        console.log(err);
-        res.status(404).end();
-      }
-      // console.log('data>>>', data);
-      const clipsData = JSON.stringify(data[1])
-      client.set('clips', 3, clipsData);
-      res.json(data);
-    })
+// const getClips = (req, res) => {
+//   db.CategoriesModel.find()
+//     // .sort({
+//     //   created_at: -1,
+//     //   view_count: -1
+//     // })
+//     .limit(8)
+//     .exec((err, data) => {
+//       if (err) {
+//         console.log(err);
+//         res.status(404).end();
+//       }
+//       // console.log('data>>>', data);
+//       const clipsData = JSON.stringify(data[1])
+//       client.set('clips', 3, clipsData);
+//       res.json(data);
+//     })
 
-}
+// }
 
-const getCache = (req, res) => {
-  //Check the cache data from the server redis
-  client.get('clips', (err, result) => {
-    if (result) {
-      console.log(result)
-      res.send(result);
-    } else {
-      getClips(req, res);
-    }
-  });
-}
+// const getCache = (req, res) => {
+//   //Check the cache data from the server redis
+//   client.get('clips', (err, result) => {
+//     if (result) {
+//       console.log(result)
+//       res.send(result);
+//     } else {
+//       getClips(req, res);
+//     }
+//   });
+// }
 
 app.get('/recent-broadcasts', (req, res) => {
   //db.CategoriesModel.find({}).sort({created_at: -1, view_count: -1}).limit(10)
