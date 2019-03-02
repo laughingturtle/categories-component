@@ -16,7 +16,7 @@ client/components/_snapshots_/*
 !.elasticbeanstalk/*.global.yml
 
 #seed data
-database/clips.txt
+clips.txt
 
 #newrelics
 newrelic_agent.log
