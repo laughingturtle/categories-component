@@ -17,3 +17,7 @@ client/components/_snapshots_/*
 
 #seed data
 database/clips.txt
+
+#newrelics
+newrelic_agent.log
+newrelic.js

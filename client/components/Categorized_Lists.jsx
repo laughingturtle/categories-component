@@ -33,16 +33,20 @@ export default class Categorized_Lists extends React.Component {
   /* for static page, comment out entire componentDidMount function */
   componentDidMount() {
     let allVideos = {};
-    fetch("/recent-broadcasts")
+    fetch("http://localhost:3000/recent-broadcasts")
+      // .then(response => {
+      //   console.log("response", response);
+      //   response.json();
+      // })
       .then(response => response.json())
       .then(data => {
         allVideos.recentBroadcasts = data;
-        return fetch("/recent-highlights");
+        return fetch("http://localhost:3000/recent-highlights");
       })
       .then(response => response.json())
       .then(data => {
         allVideos.recentHighlights = data;
-        return fetch("/popular-clips");
+        return fetch("http://localhost:3000/popular-clips");
       })
       .then(response => response.json())
       .then(data => {

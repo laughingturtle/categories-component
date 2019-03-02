@@ -1,14 +1,14 @@
-const nb = require('newrelic');
+// const nb = require('newrelic');
 const express = require(`express`);
 const app = express();
 const bodyParser = require(`body-parser`);
 const cors = require('cors');
 const responseTime = require('response-time');
-// const redis = require('redis');
+const redis = require('redis');
 // const db = require('../database'); //mySQL
 const db = require('../databaseNoSQL/db'); //mongo
 // const db = require('../databasePostgre/db'); //PostgreSQL
-// const client = redis.createClient();
+const client = redis.createClient();
 
 app.use(cors());
 app.use(bodyParser.json());
